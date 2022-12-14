@@ -6,59 +6,50 @@ import time
 
 s = HTMLSession()
 
-url = "https://fcfs-intl.fwc22.tickets.fifa.com/secure/selection/event/date/product/101397570845/lang/en"
+urlFifa = "https://fcfs-intl.fwc22.tickets.fifa.com/secure/selection/event/seat/performance/101437163918/lang/en"
+urlResale = 'https://resale-intl.fwc22.tickets.fifa.com/secure/selection/event/seat/performance/101437163918/lang/en'
 
-# Aca en elegir tenes que poner los partidos que queres buscar por numero(sin la M),
-# por ejemplo los de argentina son 8, 24 y 39 (M8, M24 y M39)
+# consulta directamente el text de availability
+# def consultarTix():
+#     r = s.get(url)
+#     categ = r.html.find('td.quantity div')
 
-elegir = [8, 24, 39, 50, 57]
-partidosElegidos = []
-partidosTotales = []
+#     for cat in categ:
+#         print(cat.text)
+
+def consultarFifa():
+    r = s.get(urlFifa)
+    categ = r.html.find('th.category.semantic-no-styling')
+    print("FIFA CAT AVAILABILITY\n")
+    for cat in categ:
+        print(cat.text+"\n")
+
+def consultarResale():
+    r = s.get(urlResale)
+    categ = r.html.find('th.category.semantic-no-styling')
+    print("\n\nRESALE CAT AVAILABILITY\n")
+    for cat in categ:
+        print(cat.text+"\n")
 
 
-def descargarPartidos():
-    r = s.get(url)
-    partidosHTML = r.html.find('div.perf_details')
 
-    for partidoHTML in partidosHTML:
-        partidosTotales.append(partidoHTML.text)
-
-
-def AñadirPartidos():
-    for partido in elegir:
-        partidosElegidos.append(partidosTotales[partido - 1])
-        
-
-
-# Consulta los datos y los imprime por consola, y envia un SMS si funk)
 data = open("files/data.txt", "r")
 f = data.readlines(5)
-print(f)
 conteo = 230
 
 
 
-def consultarPartidos():
+def printDatetime():
     now = datetime.datetime.now()
     print('Time: ' + now.strftime('%H:%M:%S UTC'))
-    print("Scraps: " + str(conteo) + "\n")
-    file = open("files/data.txt", "w")
-    file.write('Time: ' + now.strftime('%H:%M:%S UTC')+"\nScraps: "+ str(conteo))
-    file.close()
-    i = 0
-    while i < len(partidosElegidos):
-        if partidosElegidos[i].find("Currently unavailable") != -1:
-            print(f"partido M{elegir[i]} no disponible")
-            i += 1
-        else:
-            now = datetime.datetime.now()
-            print(f"partido M{elegir[i]} disponible")
-            print(f"Hay entradas para el partido M{elegir[i]}. Dia {date.today()} a las {now.strftime('%H:%M:%S UTC')}")
-            i += 1
+    # print("Scraps: " + str(conteo) + "\n")
+    # file = open("files/data.txt", "w")
+    # file.write('Time: ' + now.strftime('%H:%M:%S UTC')+"\nScraps: "+ str(conteo))
+    # file.close()        
 
-descargarPartidos()
-AñadirPartidos()
-consultarPartidos()
+printDatetime()
+consultarFifa()
+consultarResale()
 
 # keep_alive()
 # while (True):
